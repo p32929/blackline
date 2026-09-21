@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://p32929.github.io/blackline/sitemap.xml
