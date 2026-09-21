@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blackline — redact PDFs offline, in your browser. Nothing is uploaded.</title>
+<meta name="description" content="Black out text in a PDF so it is actually gone, not just covered. Blackline runs 100% in your browser — the file never leaves your computer. Free for documents up to 3 pages.">
+<link rel="canonical" href="https://p32929.github.io/blackline/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blackline — redact PDFs offline, in your browser">
+<meta property="og:description" content="Black boxes that actually delete the text underneath. 100% offline, nothing uploaded.">
+<meta property="og:url" content="https://p32929.github.io/blackline/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b0d10">
+<style>
+:root{--bg:#0b0d10;--panel:#14181d;--line:#242b33;--fg:#e8edf2;--dim:#93a1b0;--acc:#ffcf4a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{border-bottom:1px solid var(--line);padding:18px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header b{font-size:19px;letter-spacing:.2px}
+header .tag{color:var(--dim);font-size:14px}
+header .spacer{flex:1}
+a{color:var(--acc)}
+main{max-width:1000px;margin:0 auto;padding:22px 20px 80px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:44px 20px;text-align:center;background:var(--panel)}
+.drop.over{border-color:var(--acc)}
+.btn{background:var(--acc);color:#1a1a1a;border:0;border-radius:8px;padding:10px 16px;font-weight:650;cursor:pointer;font-size:15px}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.bar .muted{color:var(--dim);font-size:14px}
+.page{position:relative;margin:0 auto 18px;box-shadow:0 2px 14px rgba(0,0,0,.5);width:max-content;background:#fff}
+.page canvas{display:block}
+.overlay{position:absolute;inset:0;cursor:crosshair}
+.rect{position:absolute;background:#000;outline:1px solid #ff5d5d}
+.rect .x{position:absolute;top:-10px;right:-10px;width:20px;height:20px;border-radius:50%;background:#ff5d5d;color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:pointer}
+.limit{background:#2a1f10;border:1px solid #5a4416;padding:14px;border-radius:10px;margin:16px 0}
+section.copy{margin-top:56px;border-top:1px solid var(--line);padding-top:30px}
+section.copy h2{font-size:21px;margin:30px 0 8px}
+section.copy p,section.copy li{color:#c7d2dd}
+code{background:#11161b;padding:2px 6px;border-radius:5px;font-size:14px}
+input[type=text]{background:#0f1319;border:1px solid var(--line);color:var(--fg);padding:9px 11px;border-radius:8px;min-width:270px}
+footer{border-top:1px solid var(--line);color:var(--dim);padding:24px 20px;text-align:center;font-size:14px}
+.price{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+.tier{flex:1 1 220px;border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--panel)}
+.tier h3{margin:0 0 4px;font-size:17px}
+.tier .p{font-size:26px;font-weight:700;margin:6px 0}
+.tier ul{padding-left:18px;margin:10px 0 14px}
+</style>
+</head>
+<body>
+<header>
+  <b>Blackline</b>
+  <span class="tag">redact a PDF so the text underneath is really gone</span>
+  <span class="spacer"></span>
+  <span class="tag" id="licstate">Free — up to 3 pages</span>
+</header>
+<main>
+  <div class="drop" id="drop">
+    <p><b>Drop a PDF or an image here</b></p>
+    <p class="tag">or</p>
+    <button class="btn" id="pick">Choose a file</button>
+    <input type="file" id="file" accept="application/pdf,image/*" hidden>
+    <p class="tag" style="margin-top:16px">Your file is opened by this page and never sent anywhere. Turn off your wi-fi and it still works.</p>
+  </div>
+
+  <div id="tool" hidden>
+    <div class="bar">
+      <button class="btn" id="export">Redact &amp; download</button>
+      <button class="btn ghost" id="clear">Clear boxes</button>
+      <button class="btn ghost" id="reset">New file</button>
+      <span class="muted" id="status">Drag across anything you want removed.</span>
+    </div>
+    <div id="limit" class="limit" hidden></div>
+    <div id="pages"></div>
+  </div>
+
+  <section class="copy">
+    <h2>A black rectangle is not redaction</h2>
+    <p>Drawing a black box in Preview, Acrobat or Word puts a shape <em>on top of</em> the text. The words are still in the file. Anyone can select them, copy them out, or open the file in a text editor and read them. That is how redacted court filings, government reports and contracts keep leaking.</p>
+    <p>Blackline does the only thing that actually works: it <b>rebuilds every page as a flat image with your boxes burned in</b>, then writes a fresh PDF from those images. There is no text layer left to recover, because there is no text layer at all. It also drops the document metadata (author, title, producer, creation dates) on the way out.</p>
+
+    <h2>Nothing is uploaded — this is not a website that processes your file</h2>
+    <p>Every online redaction tool asks you to upload the document to their server. For a payslip, a medical letter, a client contract or a police record, that is the whole problem. Blackline is a single page of JavaScript: your PDF is opened by your own browser, on your own machine, and no part of it is ever transmitted. You can disconnect from the internet, redact the file, and reconnect afterwards.</p>
+
+    <h2>Pricing</h2>
+    <div class="price">
+      <div class="tier">
+        <h3>Free</h3>
+        <div class="p">$0</div>
+        <ul><li>Documents up to 3 pages</li><li>Images, any size</li><li>Full redaction, no watermark</li></ul>
+      </div>
+      <div class="tier">
+        <h3>Pro</h3>
+        <div class="p">$39</div>
+        <ul><li>Unlimited pages</li><li>One person, lifetime licence</li><li>Every device you own</li></ul>
+        <a class="btn" href="https://p32929.gumroad.com/l/blackline" id="buy-pro">Get Pro</a>
+      </div>
+      <div class="tier">
+        <h3>Team</h3>
+        <div class="p">$149</div>
+        <ul><li>Unlimited pages</li><li>Up to 10 people in one organisation</li><li>One key, shared internally</li></ul>
+        <a class="btn" href="https://p32929.gumroad.com/l/blackline" id="buy-team">Get Team</a>
+      </div>
+      <div class="tier">
+        <h3>Agency / self-host</h3>
+        <div class="p">$499</div>
+        <ul><li>Everything in Team, unlimited seats</li><li>Run it on your own domain or offline intranet</li><li>Written licence to use it on client work</li></ul>
+        <a class="btn" href="https://p32929.gumroad.com/l/blackline" id="buy-agency">Get Agency</a>
+      </div>
+    </div>
+    <p>One payment, no subscription. A licence key arrives instantly; paste it below and the page limit is gone on every device you use.</p>
+    <p><input type="text" id="key" placeholder="Paste your licence key"> <button class="btn ghost" id="activate">Activate</button> <span id="keymsg" class="tag"></span></p>
+
+    <h2>Questions people actually ask</h2>
+    <h3>Can the redacted text be recovered?</h3>
+    <p>No. The output pages are images. The characters you covered were never written into the new file, so there is nothing to select, copy, grep or undo.</p>
+    <h3>Does the output PDF stay searchable?</h3>
+    <p>No — and that is the trade. Flattening is what makes the redaction real. If you need a searchable copy, keep your original; the redacted file is the one you send out.</p>
+    <h3>Does it remove metadata too?</h3>
+    <p>Yes. The new PDF is written from scratch with empty title, author, subject, keywords, creator and producer fields. For images, re-encoding drops the EXIF block, including GPS coordinates.</p>
+    <h3>Does it work offline?</h3>
+    <p>Yes. Load the page once and it is cached; after that it works with no connection at all. That is also how you can prove to yourself that nothing is being uploaded.</p>
+    <h3>What file types can I redact?</h3>
+    <p>PDF, JPEG, PNG and WebP. Scanned documents work the same way as digital ones.</p>
+    <h3>Is there a size limit?</h3>
+    <p>Only your computer's memory. There is no upload, so there is no upload cap.</p>
+
+    <h2>Also free, from the same shelf</h2>
+    <p><a href="https://p32929.github.io/shrinkkit/">ShrinkKit</a> — compress and strip EXIF from a whole folder of images, also entirely in your browser.</p>
+  </section>
+</main>
+<footer>Built by <a href="https://github.com/p32929">p32929</a>. Runs on GitHub Pages. <a href="https://github.com/p32929/blackline">Source</a>.</footer>
+
+<script src="vendor/pdf-lib.min.js"></script>
+<script type="module">
+import * as pdfjsLib from './vendor/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
+
+const FREE_PAGES = 3, PRODUCT_ID = 'BLACKLINE_PRODUCT_ID';
+const $ = s => document.querySelector(s);
+const state = { kind:null, pdf:null, img:null, rects:[], pageCount:0, name:'document' };
+let licensed = localStorage.getItem('blackline_licensed') === '1';
+
+function setLicUI(){ $('#licstate').textContent = licensed ? 'Licensed — unlimited pages' : 'Free — up to 3 pages'; }
+setLicUI();
+
+$('#pick').onclick = () => $('#file').click();
+$('#file').onchange = e => e.target.files[0] && load(e.target.files[0]);
+const drop = $('#drop');
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) load(f); });
+
+async function load(file){
+  state.rects = []; state.name = file.name.replace(/\.[^.]+$/,'');
+  $('#pages').innerHTML = ''; $('#limit').hidden = true;
+  if (file.type === 'application/pdf'){
+    const buf = await file.arrayBuffer();
+    state.kind = 'pdf'; state.buf = buf;
+    state.pdf = await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+    state.pageCount = state.pdf.numPages;
+    const shown = licensed ? state.pageCount : Math.min(state.pageCount, FREE_PAGES);
+    if (shown < state.pageCount){
+      $('#limit').hidden = false;
+      $('#limit').innerHTML = `This document has <b>${state.pageCount} pages</b>. The free version redacts the first ${FREE_PAGES}. <a href="#" onclick="document.querySelector('#key').scrollIntoView({behavior:'smooth'});return false">Unlock unlimited pages →</a>`;
+    }
+    for (let i = 1; i <= shown; i++) await renderPdfPage(i);
+  } else if (file.type.startsWith('image/')){
+    state.kind = 'image'; state.pageCount = 1;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+    state.img = img; state.mime = file.type;
+    const c = document.createElement('canvas');
+    const scale = Math.min(1, 900 / img.width);
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    mountPage(c, 0);
+  } else { alert('Give me a PDF, JPEG, PNG or WebP.'); return; }
+  $('#drop').hidden = true; $('#tool').hidden = false;
+}
+
+async function renderPdfPage(n){
+  const page = await state.pdf.getPage(n);
+  const base = page.getViewport({ scale: 1 });
+  const scale = Math.min(1.6, 900 / base.width);
+  const vp = page.getViewport({ scale });
+  const c = document.createElement('canvas');
+  c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+  await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  mountPage(c, n - 1);
+}
+
+function mountPage(canvas, idx){
+  const wrap = document.createElement('div');
+  wrap.className = 'page'; wrap.dataset.idx = idx;
+  const ov = document.createElement('div'); ov.className = 'overlay';
+  wrap.append(canvas, ov); $('#pages').append(wrap);
+  let start = null, live = null;
+  ov.addEventListener('pointerdown', e => {
+    if (e.target !== ov) return;
+    ov.setPointerCapture(e.pointerId);
+    const r = ov.getBoundingClientRect();
+    start = { x: e.clientX - r.left, y: e.clientY - r.top };
+    live = document.createElement('div'); live.className = 'rect'; ov.append(live);
+  });
+  ov.addEventListener('pointermove', e => {
+    if (!start) return;
+    const r = ov.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    Object.assign(live.style, { left: Math.min(x, start.x) + 'px', top: Math.min(y, start.y) + 'px',
+      width: Math.abs(x - start.x) + 'px', height: Math.abs(y - start.y) + 'px' });
+  });
+  ov.addEventListener('pointerup', e => {
+    if (!start) return;
+    const r = ov.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const box = { x: Math.min(x, start.x), y: Math.min(y, start.y), w: Math.abs(x - start.x), h: Math.abs(y - start.y) };
+    start = null;
+    if (box.w < 4 || box.h < 4){ live.remove(); return; }
+    const rect = { page: idx, x: box.x / r.width, y: box.y / r.height, w: box.w / r.width, h: box.h / r.height };
+    state.rects.push(rect);
+    const del = document.createElement('span'); del.className = 'x'; del.textContent = '×';
+    del.onclick = ev => { ev.stopPropagation(); state.rects.splice(state.rects.indexOf(rect), 1); live.remove(); count(); };
+    live.append(del); count();
+  });
+}
+function count(){ $('#status').textContent = state.rects.length + ' box' + (state.rects.length === 1 ? '' : 'es') + ' drawn.'; }
+
+$('#clear').onclick = () => { state.rects = []; document.querySelectorAll('.rect').forEach(r => r.remove()); count(); };
+$('#reset').onclick = () => location.reload();
+
+$('#export').onclick = async () => {
+  if (!state.rects.length && !confirm('No boxes drawn — export a flattened copy anyway?')) return;
+  $('#export').disabled = true; $('#status').textContent = 'Flattening…';
+  try {
+    const blob = state.kind === 'pdf' ? await exportPdf() : await exportImage();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = state.name + '-redacted.' + (state.kind === 'pdf' ? 'pdf' : 'png');
+    a.click();
+    $('#status').textContent = 'Done — saved to your downloads.';
+  } catch (err) { $('#status').textContent = 'Failed: ' + err.message; }
+  $('#export').disabled = false;
+};
+
+async function exportPdf(){
+  const out = await PDFLib.PDFDocument.create();
+  const n = licensed ? state.pageCount : Math.min(state.pageCount, FREE_PAGES);
+  for (let i = 1; i <= n; i++){
+    const page = await state.pdf.getPage(i);
+    const base = page.getViewport({ scale: 1 });
+    const vp = page.getViewport({ scale: 2 });
+    const c = document.createElement('canvas');
+    c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const ctx = c.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    ctx.fillStyle = '#000';
+    for (const r of state.rects.filter(r => r.page === i - 1))
+      ctx.fillRect(r.x * c.width, r.y * c.height, r.w * c.width, r.h * c.height);
+    const jpeg = await new Promise(res => c.toBlob(res, 'image/jpeg', 0.92));
+    const img = await out.embedJpg(await jpeg.arrayBuffer());
+    const p = out.addPage([base.width, base.height]);
+    p.drawImage(img, { x: 0, y: 0, width: base.width, height: base.height });
+  }
+  out.setTitle(''); out.setAuthor(''); out.setSubject(''); out.setKeywords([]);
+  out.setProducer(''); out.setCreator('');
+  return new Blob([await out.save()], { type: 'application/pdf' });
+}
+
+async function exportImage(){
+  const img = state.img;
+  const c = document.createElement('canvas');
+  c.width = img.naturalWidth; c.height = img.naturalHeight;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  ctx.fillStyle = '#000';
+  for (const r of state.rects) ctx.fillRect(r.x * c.width, r.y * c.height, r.w * c.width, r.h * c.height);
+  return await new Promise(res => c.toBlob(res, 'image/png'));
+}
+
+$('#activate').onclick = async () => {
+  const key = $('#key').value.trim();
+  if (!key) return;
+  $('#keymsg').textContent = 'Checking…';
+  try {
+    const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ product_id: PRODUCT_ID, license_key: key, increment_uses_count: 'false' })
+    });
+    const j = await r.json();
+    if (j.success){
+      licensed = true; localStorage.setItem('blackline_licensed', '1'); setLicUI();
+      $('#keymsg').textContent = 'Activated. Page limit removed.';
+    } else $('#keymsg').textContent = 'That key was not recognised.';
+  } catch { $('#keymsg').textContent = 'Could not reach Gumroad — check your connection.'; }
+};
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+window.__blackline = { state, exportPdf, load };
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Blackline","applicationCategory":"SecurityApplication","operatingSystem":"Any (web browser)","url":"https://p32929.github.io/blackline/","description":"Redact PDFs and images entirely in your browser. The covered text is removed, not hidden, and the file is never uploaded.","offers":[{"@type":"Offer","price":"0","priceCurrency":"USD","name":"Free — up to 3 pages"},{"@type":"Offer","price":"39","priceCurrency":"USD","name":"Pro — unlimited pages","url":"https://p32929.gumroad.com/l/blackline"},{"@type":"Offer","price":"149","priceCurrency":"USD","name":"Team — 10 seats","url":"https://p32929.gumroad.com/l/blackline"},{"@type":"Offer","price":"499","priceCurrency":"USD","name":"Agency — self-host and client work","url":"https://p32929.gumroad.com/l/blackline"}]}
+</script>
+</body>
+</html>

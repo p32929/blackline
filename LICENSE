@@ -1,0 +1,40 @@
+Blackline — Licence
+Copyright (c) 2026 Fayaz Bin Salam (p32929). All rights reserved.
+
+This is source-available software, not open source.
+
+WHAT YOU MAY DO FOR FREE
+  1. Read this source code.
+  2. Use the hosted tool at https://p32929.github.io/blackline/ for documents of
+     up to 3 pages, for any purpose, including commercial work.
+  3. Clone this repository and run it locally, on your own machine, for your own
+     personal use and evaluation.
+
+WHAT NEEDS A PAID LICENCE (https://p32929.gumroad.com/l/blackline)
+  Pro ($39)    — removes the 3-page limit for one named individual, on any number
+                 of that individual's own devices, for life.
+  Team ($149)  — the same, for up to ten named individuals inside one organisation.
+  Agency ($499)— unlimited named individuals inside one organisation, PLUS the
+                 right to host this software on your own domain or on an internal
+                 offline network, and to use it in the course of work delivered to
+                 your own clients.
+
+WHAT IS NOT PERMITTED WITHOUT WRITTEN PERMISSION
+  Redistributing this software (modified or not), publishing it under another
+  name, selling it, or offering it as a hosted service to third parties, unless
+  you hold the Agency licence above.
+
+THIRD-PARTY COMPONENTS
+  The files in vendor/ are not covered by this licence and remain under the terms
+  of their own authors:
+    - pdf.js (Mozilla Foundation) — Apache License 2.0
+    - pdf-lib (Andrew Dillon)      — MIT License
+  Their licence notices are preserved inside those files.
+
+NO WARRANTY
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF
+  OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  You remain responsible for checking a redacted document before you send it.
