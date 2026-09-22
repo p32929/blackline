@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why redacted PDFs leak: how a black box gives the text back</title>
+<meta name="description" content="Most PDF redaction is a black rectangle drawn on top of text that is still in the file. Here is exactly how that leaks, how to test your own file in one command, and how to redact so the text is really gone.">
+<link rel="canonical" href="https://p32929.github.io/blackline/guides/failed-redactions.html">
+<meta property="og:title" content="Why redacted PDFs leak: how a black box gives the text back">
+<meta property="og:description" content="The rectangle is a new object drawn over the page. The words underneath are still there — and copy-paste gets them back.">
+<link rel="stylesheet" href="guides.css">
+</head>
+<body>
+<header><b><a href="../" style="color:inherit;text-decoration:none">Blackline</a></b>
+<span class="spacer"></span><a href="./">Guides</a> <a href="../">Open the tool</a></header>
+<main>
+<h1>Why redacted PDFs leak: how a black box gives the text back</h1>
+<p class="lede">Almost every "redaction" that has ever embarrassed a law firm, a government department or a newsroom failed the same way: the black box was drawn <em>on top of</em> the text, and the text stayed in the file.</p>
+
+<h2>What actually happens inside the PDF</h2>
+<p>A PDF page is not a picture. It is a list of drawing instructions — place this glyph here, fill this rectangle there — plus the fonts and images they refer to. When a tool "redacts" by drawing a filled black rectangle, it appends one more instruction to that list:</p>
+<pre>... (Employee salary: 184000) Tj     &lt;- the words, still in the file
+0 0 0 rg  120 540 220 14 re  f       &lt;- a black rectangle, drawn after</pre>
+<p>Your eye sees a black bar because the rectangle is painted last. Every other consumer of the file — a text extractor, a search index, a screen reader, the copy-paste buffer — reads the text instruction and never looks at the rectangle at all. Nothing was deleted. Something was covered.</p>
+
+<h2>The five ways it comes back out</h2>
+<ol>
+<li><strong>Copy and paste.</strong> Select over the black bar in any PDF reader and paste into a text editor. This is the one that has burned the most people, because it needs no tools and no skill.</li>
+<li><strong>Text extraction.</strong> <code>pdftotext report.pdf -</code> dumps every text object on the page, redacted or not.</li>
+<li><strong>Deleting the annotation.</strong> If the box was added as an annotation or a form field rather than page content, it can simply be removed and the page is back to its original state.</li>
+<li><strong>Attachments and earlier versions.</strong> PDFs support incremental saves. An edited file can still carry the whole previous revision inside it, which is recovered by reverting to the earlier cross-reference table.</li>
+<li><strong>Metadata.</strong> Author, original filename, the software used, and often a full title line survive in the document information dictionary and the XMP packet, even when every visible page is clean. See <a href="remove-pdf-metadata.html">removing PDF metadata</a>.</li>
+</ol>
+<p>The most-reported public examples over the last two decades all sit in the first two rows of that list — court filings and official reports published with black bars that could be selected and pasted straight out. The technical cause was never sophisticated. It was that the exporting tool was asked to draw, not to delete.</p>
+
+<h2>Blur and pixelation are not safer — they are worse</h2>
+<p>Blurring or pixelating a name or a face is a <em>reversible transform</em>. The original detail is not removed, it is smeared across neighbouring pixels in a way that carries information about what it was. Public research tooling has demonstrated recovery of pixelated text by rendering candidate strings through the same pixelation and matching the result, and a well-known criminal case in 2007 was broken by reversing a swirl filter applied to a face. If a region matters enough to hide, fill it with a solid colour. Never blur it, never mosaic it, never lower its opacity.</p>
+
+<h2>Test any file you are about to send, in one command</h2>
+<div class="card">
+<pre>pdftotext redacted.pdf - | grep -i "the secret word"</pre>
+<p style="margin:.6em 0 0">If it prints anything, the redaction failed. If <code>pdftotext</code> is not installed, open the PDF, select the whole page, copy, and paste into a plain text editor — same test, no install. Do this on <em>every</em> file before it leaves your hands. It takes ten seconds and it is the only check that actually proves anything.</p>
+</div>
+
+<h2>What a real redaction has to do</h2>
+<ul>
+<li><strong>Remove the underlying content</strong>, not cover it. After redaction there must be no text object, no image data and no vector art in the covered region.</li>
+<li><strong>Survive extraction.</strong> <code>pdftotext</code> and copy-paste must return nothing for the covered area.</li>
+<li><strong>Leave the rest of the document intact</strong>, readable and printable — a redaction that blanks the whole page is not a redaction, it is a deletion.</li>
+<li><strong>Strip metadata</strong>, because the leak is often not on the page at all.</li>
+<li><strong>Not depend on a server.</strong> Uploading a document you are redacting <em>because it is sensitive</em> to a stranger's web service is its own disclosure.</li>
+</ul>
+
+<h2>How Blackline does it</h2>
+<p><a href="../">Blackline</a> renders each page, composites your black boxes into the page pixels, and writes a new PDF from those flattened pages. The original text objects are not carried over, because the page is rebuilt rather than annotated. The trade-off is honest and worth stating: the output is no longer selectable text anywhere, and the file is usually larger. That is the price of the covered words being genuinely gone. Everything runs in your browser — the file is never uploaded, and the tool keeps working with your network disconnected.</p>
+<p>The repository ships the test that proves it: a PDF carrying a known canary string is run through the deployed app, and the output is asserted to contain no trace of the canary in its raw bytes, to return empty text extraction on every page, to have pure black pixels inside the box and readable text outside it, and to carry empty metadata fields.</p>
+<p style="margin-top:26px"><a class="cta" href="../">Redact a file now — free, nothing uploaded</a></p>
+</main>
+<footer>Blackline — <a href="../">tool</a> · <a href="./">guides</a> · <a href="https://github.com/p32929/blackline">source</a></footer>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to redact a PDF for free, without uploading it anywhere</title>
+<meta name="description" content="Free ways to black out text in a PDF so it cannot be recovered — what Preview, Word and the free online converters actually do, which ones leak, and how to verify your own file.">
+<link rel="canonical" href="https://p32929.github.io/blackline/guides/how-to-redact-a-pdf-free.html">
+<meta property="og:title" content="How to redact a PDF for free, without uploading it anywhere">
+<meta property="og:description" content="Which free redaction routes actually delete the text, and which just draw a rectangle over it.">
+<link rel="stylesheet" href="guides.css">
+</head>
+<body>
+<header><b><a href="../" style="color:inherit;text-decoration:none">Blackline</a></b>
+<span class="spacer"></span><a href="./">Guides</a> <a href="../">Open the tool</a></header>
+<main>
+<h1>How to redact a PDF for free, without uploading it anywhere</h1>
+<p class="lede">The document you want to redact is, by definition, the one you should not be uploading to a free web converter. Here are the routes that cost nothing and keep the file on your machine — and the ones that quietly do not work.</p>
+
+<h2>The fastest route: do it in the browser, offline</h2>
+<ol>
+<li>Open <a href="../">Blackline</a>. Nothing installs and there is no account.</li>
+<li>Drop the PDF or image in. It is opened by your browser, not sent anywhere — you can disconnect your network first and it will still work.</li>
+<li>Drag a box over anything that must go. Repeat on every page.</li>
+<li>Export. Each page is rebuilt with the boxes burned into the page itself, so the covered text is not in the output file at all, and the document information fields come out empty.</li>
+<li>Verify before you send it — see the test at the bottom of this page.</li>
+</ol>
+<p>Free covers documents up to three pages, which is enough for a contract page, a payslip, a bank statement or an ID scan. Longer documents are what the paid tiers are for.</p>
+
+<h2>What the other free routes really do</h2>
+<table>
+<tr><th>Route</th><th>What it does</th><th>Safe?</th></tr>
+<tr><td>Apple Preview — the highlighter or a filled shape</td><td>Draws an annotation over the text</td><td><strong>No.</strong> The text stays and can be copied out. Preview's dedicated <em>Redact</em> command (newer macOS) does remove content — the shape tools do not.</td></tr>
+<tr><td>Microsoft Word — black highlight, then export to PDF</td><td>Formats the text as black-on-black</td><td><strong>No.</strong> The characters are still text. Select-all and paste returns them.</td></tr>
+<tr><td>Free online "redact PDF" sites</td><td>Uploads your file to their server</td><td><strong>Depends — and you cannot check.</strong> Many do redact correctly. All of them now hold a copy of the document you considered sensitive enough to redact.</td></tr>
+<tr><td>Print to PDF after covering</td><td>Re-renders the page, usually flattening annotations</td><td>Often fine for the page content, but metadata frequently survives and the result varies by printer driver. Verify it.</td></tr>
+<tr><td>Screenshot each page, black out, re-assemble</td><td>Rasterises everything</td><td>Safe for content, painful for anything over two pages, and it loses text quality.</td></tr>
+<tr><td>LibreOffice Draw</td><td>Edits objects directly — you can delete the text, not cover it</td><td>Safe <em>if</em> you delete rather than cover, but it reflows layouts and is fiddly on complex documents.</td></tr>
+</table>
+
+<h2>The rule underneath all of it</h2>
+<p>Covering is not removing. If a route lets you drag the black box off again afterwards, the text is still in the file. If the route rebuilt or re-rendered the page, it is probably gone. The only way to know which one you are holding is to test it.</p>
+
+<h2>Verify the result — ten seconds, no install</h2>
+<div class="card">
+<p style="margin:0 0 .6em"><strong>With tools:</strong></p>
+<pre>pdftotext redacted.pdf - | grep -i "something that should be gone"</pre>
+<p style="margin:.8em 0 .6em"><strong>Without tools:</strong> open the exported PDF, press <code>Ctrl/Cmd+A</code>, copy, and paste into any plain text editor. Read what comes out.</p>
+<p style="margin:0">Anything appearing from under a black bar means the redaction failed. Do not send the file.</p>
+</div>
+
+<h2>Also check what is not on the page</h2>
+<p>A clean-looking page can still ship the author's name, the original filename, the creating software and timestamps. That lives in the metadata, and most redaction routes never touch it — <a href="remove-pdf-metadata.html">how to remove PDF metadata</a>.</p>
+<p>If you are redacting under a legal or regulatory obligation rather than for personal privacy, work through the <a href="redaction-compliance-checklist.html">redaction compliance checklist</a> before release.</p>
+<p style="margin-top:26px"><a class="cta" href="../">Open Blackline — free, offline, no signup</a></p>
+</main>
+<footer>Blackline — <a href="../">tool</a> · <a href="./">guides</a> · <a href="https://github.com/p32929/blackline">source</a></footer>
+</body>
+</html>

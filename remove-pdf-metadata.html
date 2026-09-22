@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to remove PDF and image metadata before you send a file</title>
+<meta name="description" content="What a PDF and a photo carry besides the visible content — author, filename, GPS, timestamps, software — how to read it, and how to strip it without uploading the file.">
+<link rel="canonical" href="https://p32929.github.io/blackline/guides/remove-pdf-metadata.html">
+<meta property="og:title" content="How to remove PDF and image metadata before you send a file">
+<meta property="og:description" content="The page can be clean while the file still names you, your laptop, and where the photo was taken.">
+<link rel="stylesheet" href="guides.css">
+</head>
+<body>
+<header><b><a href="../" style="color:inherit;text-decoration:none">Blackline</a></b>
+<span class="spacer"></span><a href="./">Guides</a> <a href="../">Open the tool</a></header>
+<main>
+<h1>How to remove PDF and image metadata before you send a file</h1>
+<p class="lede">Redacting the page and forgetting the metadata is the second most common way a document gives away what it was meant to hide. The page is what you looked at. The metadata is what you never opened.</p>
+
+<h2>What a PDF is carrying</h2>
+<ul>
+<li><strong>The document information dictionary</strong> — Title, Author, Subject, Keywords, Creator, Producer, CreationDate, ModDate. Author is very often a real person's account name; Title is frequently the original filename, including the bit you renamed the file to hide.</li>
+<li><strong>The XMP packet</strong> — a second, independent copy of much of the same thing, plus editing history in some tools. Clearing the info dictionary and leaving XMP is a common half-fix.</li>
+<li><strong>Embedded originals</strong> — attached files, embedded fonts with subset names, and images that still hold their own EXIF.</li>
+<li><strong>Previous revisions</strong> — PDFs can be saved incrementally, keeping the earlier version of the document inside the same file.</li>
+</ul>
+
+<h2>What a photo or screenshot is carrying</h2>
+<ul>
+<li><strong>GPS coordinates</strong> — latitude, longitude and often altitude, written by nearly every phone camera unless location access was denied.</li>
+<li><strong>Device and lens</strong> — make, model, serial number in some bodies, lens, and the exact capture settings.</li>
+<li><strong>Timestamps</strong> — original, digitised and modified, usually in local time, which also discloses the time zone.</li>
+<li><strong>Thumbnails</strong> — EXIF can embed a small preview that was generated <em>before</em> your edits. Cropping a face out of a photo does not always crop it out of the embedded thumbnail.</li>
+<li><strong>Software trail</strong> — what edited it and when.</li>
+</ul>
+
+<h2>Read it first, so you know what you are removing</h2>
+<pre>exiftool file.pdf          # or file.jpg — prints every tag
+pdfinfo file.pdf           # PDF info dictionary only
+strings file.pdf | head -50</pre>
+<p>If you have no tools installed: on Windows, right-click the file, Properties, Details tab, and use <em>Remove Properties and Personal Information</em>. On macOS, Get Info shows only a fraction of it, so do not trust a clean-looking Get Info panel.</p>
+
+<h2>Removing it</h2>
+<table>
+<tr><th>Route</th><th>Command or step</th><th>Note</th></tr>
+<tr><td>exiftool</td><td><code>exiftool -all= file.jpg</code></td><td>Thorough for images. Keeps a backup as <code>file.jpg_original</code> unless you add <code>-overwrite_original</code>.</td></tr>
+<tr><td>exiftool, PDFs</td><td><code>exiftool -all= -overwrite_original file.pdf</code></td><td>PDF is append-only by design, so exiftool marks the old metadata as deleted rather than truly removing it. Use <code>qpdf --linearize</code> afterwards to write a clean file.</td></tr>
+<tr><td>qpdf</td><td><code>qpdf --linearize in.pdf out.pdf</code></td><td>Rewrites the file structure, dropping unreferenced objects and earlier revisions.</td></tr>
+<tr><td>Re-render the pages</td><td>Rasterise and rebuild</td><td>The most complete option: nothing from the original file structure survives into the new one.</td></tr>
+<tr><td>Windows Explorer</td><td>Properties → Details → Remove Properties</td><td>Handles the common fields. Does not reach XMP or embedded image EXIF.</td></tr>
+</table>
+
+<h2>The no-install route</h2>
+<p><a href="../">Blackline</a> rebuilds every page from rendered pixels and writes a fresh document, so the output carries no document information fields, no XMP packet inherited from the source, and no earlier revisions — the metadata is not stripped from the old file, it simply never exists in the new one. The same applies to images: the exported file is re-encoded from the canvas, so EXIF, GPS and embedded thumbnails do not come along. It runs entirely in your browser, which matters here: sending a file to a metadata-removal service means the service now has both the file and the metadata.</p>
+
+<h2>Check it afterwards. Always.</h2>
+<div class="card">
+<pre>exiftool cleaned.pdf | grep -Ei "author|title|creator|producer|gps|date"</pre>
+<p style="margin:.6em 0 0">Expect nothing but the file size and format lines. If a name, a path or a coordinate is still there, the file is not ready to send.</p>
+</div>
+<p>Related: <a href="failed-redactions.html">why the black boxes themselves leak</a>, and the <a href="redaction-compliance-checklist.html">pre-release checklist</a>.</p>
+<p style="margin-top:26px"><a class="cta" href="../">Strip it in the browser — free, nothing uploaded</a></p>
+</main>
+<footer>Blackline — <a href="../">tool</a> · <a href="./">guides</a> · <a href="https://github.com/p32929/blackline">source</a></footer>
+</body>
+</html>
