@@ -47,6 +47,15 @@ It must be served over http (not opened as a `file://` path), because the PDF re
 
 Yes, and it is checked rather than claimed. `test/README.md` describes the test that ships with this repo: a PDF containing a known canary string is redacted, and the output is then asserted to have (a) no trace of the canary anywhere in the raw bytes, (b) an empty text layer, (c) a solid-black redacted region, and (d) empty metadata — while the text you did *not* cover still renders.
 
+## Guides
+
+Short, practical write-ups — each one ends with a test you can run on your own file.
+
+- [Why redacted PDFs leak: how a black box gives the text back](https://p32929.github.io/blackline/guides/failed-redactions.html)
+- [How to redact a PDF for free, without uploading it anywhere](https://p32929.github.io/blackline/guides/how-to-redact-a-pdf-free.html)
+- [How to remove PDF and image metadata before you send a file](https://p32929.github.io/blackline/guides/remove-pdf-metadata.html)
+- [Redaction checklist for GDPR, HIPAA and disclosure](https://p32929.github.io/blackline/guides/redaction-compliance-checklist.html)
+
 ## Pricing
 
 The hosted tool is free for documents up to 3 pages, with no watermark and no signup. Longer documents need a licence key:
