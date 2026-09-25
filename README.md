@@ -65,6 +65,7 @@ The hosted tool is free for documents up to 3 pages, with no watermark and no si
 | **Pro — $39** | Unlimited pages, one person, lifetime, every device you own |
 | **Team — $149** | Unlimited pages, up to 10 people in one organisation |
 | **Agency — $499** | Unlimited seats, plus the right to self-host it on your own domain or offline intranet and use it on client work |
+| **White-Label Source License — $1,999** | Full source, rebrand it under your own name, resell it as your own product |
 
 [Get a licence →](https://p32929.gumroad.com/l/blackline) · one payment, no subscription. Paste the key into the box on the site and the limit is gone.
 
