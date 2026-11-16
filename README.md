@@ -1,6 +1,6 @@
 # Blackline
 
-Black out text in a PDF so it is actually gone — not just covered up. Runs entirely in your browser; the file never leaves your computer.
+Black out text in a PDF so it is actually gone, not just covered up. It runs entirely in your browser, so the file never leaves your computer.
 
 **[Open Blackline →](https://p32929.github.io/blackline/)**
 
@@ -14,12 +14,12 @@ Blackline rebuilds every page as a flat image with your boxes burned in, then wr
 
 ## Features
 
-- **Real redaction** — the covered characters are never written into the output file.
-- **Nothing is uploaded** — your PDF is opened by your own browser. Turn off your wi-fi and it still works.
-- **Metadata stripped** — title, author, subject, keywords, creator and producer come out empty. Images lose their EXIF and GPS block.
-- **Images too** — JPEG, PNG and WebP, as well as PDF. Scans work the same as digital documents.
-- **No account, no install, no extension** — one page, one file in, one file out.
-- **Installable and offline** — it is a PWA, so after the first visit it works with no connection at all.
+1. **Real redaction** — the covered characters are never written into the output file.
+2. **Nothing is uploaded** — your PDF is opened by your own browser. Turn off your wi-fi and it still works.
+3. **Metadata stripped** — title, author, subject, keywords, creator and producer come out empty. Images lose their EXIF and GPS block.
+4. **Images too** — JPEG, PNG and WebP, as well as PDF. Scans work the same as digital documents.
+5. **No account, no install, no extension** — one page, one file in, one file out.
+6. **Installable and offline** — it is a PWA, so after the first visit it works with no connection at all.
 
 ## Quick start
 
@@ -28,7 +28,7 @@ Blackline rebuilds every page as a flat image with your boxes burned in, then wr
 3. Drag across anything you want removed. A red-outlined black box appears — click the × to undo one.
 4. Hit **Redact & download**.
 
-That's it. There is no step 5. (5. Star the repo :P)
+That's it.
 
 ## Run it on your own machine
 
@@ -51,10 +51,10 @@ Yes, and it is checked rather than claimed. `test/README.md` describes the test 
 
 Short, practical write-ups — each one ends with a test you can run on your own file.
 
-- [Why redacted PDFs leak: how a black box gives the text back](https://p32929.github.io/blackline/guides/failed-redactions.html)
-- [How to redact a PDF for free, without uploading it anywhere](https://p32929.github.io/blackline/guides/how-to-redact-a-pdf-free.html)
-- [How to remove PDF and image metadata before you send a file](https://p32929.github.io/blackline/guides/remove-pdf-metadata.html)
-- [Redaction checklist for GDPR, HIPAA and disclosure](https://p32929.github.io/blackline/guides/redaction-compliance-checklist.html)
+1. [Why redacted PDFs leak: how a black box gives the text back](https://p32929.github.io/blackline/guides/failed-redactions.html)
+2. [How to redact a PDF for free, without uploading it anywhere](https://p32929.github.io/blackline/guides/how-to-redact-a-pdf-free.html)
+3. [How to remove PDF and image metadata before you send a file](https://p32929.github.io/blackline/guides/remove-pdf-metadata.html)
+4. [Redaction checklist for GDPR, HIPAA and disclosure](https://p32929.github.io/blackline/guides/redaction-compliance-checklist.html)
 
 ## Pricing
 
@@ -75,25 +75,12 @@ The Blackline source in this repository is **not** open source — see [LICENSE]
 
 ## Contributing
 
-Contributions are warmly welcomed and greatly appreciated! Whether it's a bug fix, new feature, or improvement, your input helps make this project better for everyone.
-
-Before submitting a pull request, please:
-
-1. Create an issue describing the feature or bug fix you'd like to work on
-2. Wait for discussion and approval to ensure alignment with project goals
-3. Fork the repository and create your feature branch
-4. Submit your pull request with a clear description of changes
-
-This approach helps avoid duplicate efforts and ensures smooth collaboration. Thank you for considering contributing!
+Contributions are very welcome, thank you! Before you start on a pull request, please open an issue and tell me what you would like to add or change. That way we can agree on it first, and your time is not wasted on something that might not fit. Thanks for helping make Blackline better.
 
 ## Share
 
-[![Facebook](https://img.shields.io/badge/Share%20on-Facebook-1877F2?logo=facebook&logoColor=white)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/p32929/blackline)
-[![X](https://img.shields.io/badge/Share%20on-X-000000?logo=x&logoColor=white)](https://twitter.com/intent/tweet?url=https://github.com/p32929/blackline&text=Blackline%20-%20redact%20PDFs%20offline%2C%20in%20your%20browser)
-[![Reddit](https://img.shields.io/badge/Share%20on-Reddit-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/submit?url=https://github.com/p32929/blackline&title=Blackline%20-%20redact%20PDFs%20offline%2C%20in%20your%20browser)
-[![Tumblr](https://img.shields.io/badge/Share%20on-Tumblr-36465D?logo=tumblr&logoColor=white)](https://www.tumblr.com/share/link?url=https://github.com/p32929/blackline)
-[![Pocket](https://img.shields.io/badge/Save%20to-Pocket-EF3F56?logo=pocket&logoColor=white)](https://getpocket.com/save?url=https://github.com/p32929/blackline)
+<a href="https://p32929.github.io/share/?repo=blackline"><img src="https://p32929.github.io/readme/share.svg" alt="Share this with your friends in just a click" width="420"></a>
 
----
+## Support
 
-<a href="https://www.buymeacoffee.com/p32929"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-ffdd00?logo=buymeacoffee&logoColor=black" alt="Buy me a coffee"></a>
+<a href="https://p32929.github.io/support/"><img src="https://p32929.github.io/readme/support.svg" alt="If you like my works and want to support me, feel free to support" width="420"></a>
